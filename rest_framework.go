@@ -8,12 +8,13 @@ import (
 )
 
 /*
-	1. 创建 iris app
-	2. 设置日志级别
-	3. 设置 recover 中间件
-	4. 设置 logger 中间件
+1. 创建 iris app
+2. 设置日志级别
+3. 设置 recover 中间件
+4. 设置 logger 中间件
+@params settingsName 配置文件名称
 */
-func NewIrisApp() *iris.Application {
+func NewIrisApp(settingsName string) *iris.Application {
 	settings.Init("test_settings")
 	app := iris.New()
 	app.Logger().SetLevel("info")

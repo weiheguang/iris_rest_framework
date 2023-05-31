@@ -87,7 +87,8 @@ type errorHandler func(iris.Context, error)
 // }
 
 // New constructs a new Secure instance with supplied options.
-//  新建一个中间件实例
+//
+//	新建一个中间件实例
 func New(cfg ...Config) *Middleware {
 	var c Config
 	if len(cfg) == 0 {
@@ -168,7 +169,7 @@ func (m *Middleware) CheckJWT(ctx iris.Context) error {
 		return nil
 	}
 	// 解析token
-	parsedToken, err := jwtParser.ParseWithClaims(token, &MyClaims{}, m.Config.ValidationKeyGetter)
+	parsedToken, err := jwtParser.ParseWithClaims(token, m.Config.Claims, m.Config.ValidationKeyGetter)
 	if err != nil {
 		logf(ctx, "Error parsing token: %v", err)
 		return ErrTokenInvalid
@@ -181,11 +182,11 @@ func (m *Middleware) CheckJWT(ctx iris.Context) error {
 		return ErrTokenInvalid
 	}
 	// 解析token数据
-	claims, ok := parsedToken.Claims.(*MyClaims)
-	if ok && parsedToken.Valid {
-		// fmt.Printf("%v %v", claims.Username, claims.RegisteredClaims.ExpiresAt)
-		logf(ctx, "%v, %v", claims.Uid, claims.RegisteredClaims.ExpiresAt)
-	}
+	// claims, ok := parsedToken.Claims.(*MyClaims)
+	// if ok && parsedToken.Valid {
+	// 	// fmt.Printf("%v %v", claims.Username, claims.RegisteredClaims.ExpiresAt)
+	// 	logf(ctx, "%v, %v", claims.Uid, claims.RegisteredClaims.ExpiresAt)
+	// }
 	// If we get here, everything worked and we can set the
 	// user property in context.
 	// 把解析后的token放到context中

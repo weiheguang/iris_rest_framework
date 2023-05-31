@@ -29,11 +29,13 @@ type Config struct {
 	// Important to avoid security issues described here: https://auth0.com/blog/2015/03/31/critical-vulnerabilities-in-json-web-token-libraries/
 	// Default: nil
 	SigningMethod jwt.SigningMethod
+	// custom claims
+	Claims jwt.RegisteredClaims
 }
 
 // wanxiang的token payload
-type MyClaims struct {
-	*jwt.RegisteredClaims
-	// Username string `json:"username"`
-	Uid int `json:"uid"`
-}
+// type MyClaims struct {
+// 	*jwt.RegisteredClaims
+// 	// Username string `json:"username"`
+// 	Uid int `json:"uid"`
+// }
