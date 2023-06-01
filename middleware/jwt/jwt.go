@@ -100,6 +100,9 @@ func New(cfg ...Config) *Middleware {
 	if c.ContextKey == "" {
 		c.ContextKey = DefaultContextKey
 	}
+	if c.UserIDKey == "" {
+		c.UserIDKey = DefayktUserIDKey
+	}
 
 	if c.ErrorHandler == nil {
 		c.ErrorHandler = OnError
@@ -166,6 +169,8 @@ func (m *Middleware) CheckJWT(ctx iris.Context) error {
 		// return ErrTokenMissing
 		// token 字段置空
 		ctx.Values().Set(m.Config.ContextKey, "")
+		// 设置 remote_user 为空
+		ctx.Values().Set(m.Config.UserIDKey, "")
 		return nil
 	}
 	// 解析token
@@ -191,6 +196,10 @@ func (m *Middleware) CheckJWT(ctx iris.Context) error {
 	// user property in context.
 	// 把解析后的token放到context中
 	logf(ctx, "%v", parsedToken)
+	ctx.Values().Set(m.Config.ContextKey, parsedToken)
+	// cType := reflect.TypeOf(m.Config.Claims).Kind()
+	id := parsedToken.Claims.(jwt.MapClaims)["id"].(string)
+	ctx.Values().Set(m.Config.ContextKey, id)
 	ctx.Values().Set(m.Config.ContextKey, parsedToken)
 	return nil
 }
@@ -240,13 +249,14 @@ func FromParameter(param string) TokenExtractor {
 	}
 }
 
-func GetJwtMiddleware() *Middleware {
+func GetJwtMiddleware(claims RegisteredClaims) *Middleware {
 	config := Config{
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
 			return []byte(viper.GetString("JWT_SECRET")), nil
 		},
 		SigningMethod: jwt.SigningMethodHS256,
 		Extractor:     FromFirst(FromAuthHeader, FromParameter("token")),
+		Claims:        claims,
 	}
 	return New(config)
 }

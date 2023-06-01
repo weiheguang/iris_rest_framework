@@ -15,7 +15,8 @@ import (
 @params settingsName 配置文件名称
 */
 func NewIrisApp(settingsName string) *iris.Application {
-	settings.Init("test_settings")
+
+	settings.Init(settingsName)
 	app := iris.New()
 	app.Logger().SetLevel("info")
 	app.Use(recover.New())

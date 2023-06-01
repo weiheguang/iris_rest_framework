@@ -51,16 +51,15 @@ func GetInt64(key string) int64 {
 }
 
 func Init(fileName string) {
-	if fileName == "" {
-		fileName = "settings"
-	}
-	viper.SetConfigName(fileName) // name of config file (without extension)
-	viper.AddConfigPath(".")
-	err := viper.ReadInConfig() // Find and read the config file
-	if err != nil {             // Handle errors reading the config file
-		// panic(fmt.Errorf("配置文件不存在: %s", err))
-		fmt.Printf("配置文件不存在: %s", err)
-		// myLogger.Error("当前文件夹没有找到 配置文件")
+	if fileName != "" {
+		viper.SetConfigName(fileName) // name of config file (without extension)
+		viper.AddConfigPath(".")
+		err := viper.ReadInConfig() // Find and read the config file
+		if err != nil {             // Handle errors reading the config file
+			// panic(fmt.Errorf("配置文件不存在: %s", err))
+			fmt.Printf("配置文件不存在: %s", err)
+			// myLogger.Error("当前文件夹没有找到 配置文件")
+		}
 	}
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()

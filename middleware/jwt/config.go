@@ -5,6 +5,8 @@ import "github.com/golang-jwt/jwt/v4"
 const (
 	// DefaultContextKey jwt
 	DefaultContextKey = "jwt"
+	// 默认的解析后放在 iris header里面的已验证的 user_id 的key 值
+	DefayktUserIDKey = "REMOTE_USER"
 )
 
 type Config struct {
@@ -21,6 +23,8 @@ type Config struct {
 	// from the JWT will be stored.
 	// 默认的存储在iris Context中的key, 默认值为"jwt"
 	ContextKey string
+	// 解析后放在 iris header里面的已验证的 user_id 的key 值, 默认为 "REMOTE_USER", 与django保持一致
+	UserIDKey string
 	// A boolean indicating if the credentials are required or not
 	// Default value: false
 	CredentialsOptional bool
