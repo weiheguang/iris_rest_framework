@@ -263,7 +263,7 @@ func TestListView(t *testing.T) {
 func List(ctx iris.Context) {
 	config := &ListAPIViewConf{
 		Model: rftests.User{},
-		db:    database.GetDb(),
+		// db:    database.GetDb(),
 		// 设置查询字段
 		FilterFields: []string{"name", "age", "id"},
 	}
@@ -280,7 +280,7 @@ func List(ctx iris.Context) {
 func List2(ctx iris.Context) {
 	config := &ListAPIViewConf{
 		Model: rftests.User{},
-		db:    database.GetDb(),
+		// db:    database.GetDb(),
 		// 设置查询字段
 		FilterFields: []string{"name1", "age"},
 	}

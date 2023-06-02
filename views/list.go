@@ -20,8 +20,8 @@ type ListAPIView struct {
 }
 
 type ListAPIViewConf struct {
-	Model interface{}  // 设置 model
-	db    *database.Db // 设置 db
+	Model interface{} // 设置 model
+	// db    *gorm.DB    // 设置 db
 	// 分页放到 view里面解析
 	// Page         int      // 设置分页, 默认为 1
 	// PageSize     int      // 设置分页大小, 默认为 10
@@ -73,7 +73,7 @@ func (v *ListAPIView) List(ctx iris.Context) response.IRFResult {
 	}
 	fmt.Println("fieldTagJsonList:", fieldTagJsonList)
 	// 判断过滤条件是否为空, 如果过滤条件为空, 则不进行过滤
-	db := v.conf.db.DB
+	db := database.GetDb()
 	if len(v.conf.FilterFields) > 0 {
 		// 判断过滤字段是否在 model 的字段中
 		for _, filterField := range v.conf.FilterFields {
@@ -127,7 +127,7 @@ func (v *ListAPIView) List(ctx iris.Context) response.IRFResult {
 					for _, v := range valueList {
 						valueListInterface = append(valueListInterface, v)
 					}
-					db = v.conf.db.Where(fieldName+" in (?)", valueListInterface)
+					db = db.Where(fieldName+" in (?)", valueListInterface)
 					fmt.Println("case in , fieldName:", fieldName, "valueListInterface:", valueListInterface)
 				case "startswith":
 					db = db.Where(fieldName+" like ?", value+"%")
