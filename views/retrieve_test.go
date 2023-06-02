@@ -77,7 +77,7 @@ func GetBy(ctx iris.Context) {
 	pk := ctx.Params().GetUint64Default("id", 0)
 	conf := &RetrieveAPIViewConf{
 		Model: rftests.User{},
-		db:    database.GetDb(),
+		// db:    database.GetDb(),
 	}
 	// logger := ctx.Application().Logger()
 	// logger.Infof("pk: %d", pk)

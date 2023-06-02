@@ -5,13 +5,13 @@ import (
 	"log"
 	"time"
 
-	"github.com/weiheguang/iris_rest_framework/database"
+	"gorm.io/gorm"
 )
 
 // 初始换数据库
 
 // 创建数据库
-func CreateDatabase(db *database.Db, dbName string) {
+func CreateDatabase(db *gorm.DB, dbName string) {
 	createSQL := fmt.Sprintf(
 		"CREATE DATABASE IF NOT EXISTS `%s` CHARACTER SET utf8mb4;",
 		dbName,
@@ -29,7 +29,7 @@ func CreateDatabase(db *database.Db, dbName string) {
 }
 
 // 删除数据库
-func DropDatabase(db *database.Db, dbName string) {
+func DropDatabase(db *gorm.DB, dbName string) {
 	dropSQL := fmt.Sprintf(
 		"DROP DATABASE IF EXISTS `%s`;",
 		dbName,
@@ -42,7 +42,7 @@ func DropDatabase(db *database.Db, dbName string) {
 }
 
 // 创建表
-func CreateTables(db *database.Db, sql string) {
+func CreateTables(db *gorm.DB, sql string) {
 	result := db.Exec(sql)
 	if result.Error != nil {
 		log.Fatal(result.Error)
@@ -50,7 +50,7 @@ func CreateTables(db *database.Db, sql string) {
 }
 
 // 插入数据
-func InsertData(db *database.Db, sql string, args ...interface{}) {
+func InsertData(db *gorm.DB, sql string, args ...interface{}) {
 	result := db.Exec(sql, args...)
 	if result.Error != nil {
 		log.Fatal(result.Error)

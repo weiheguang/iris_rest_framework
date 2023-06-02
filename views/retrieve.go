@@ -28,7 +28,7 @@ type RetrieveAPIView struct {
 
 type RetrieveAPIViewConf struct {
 	Model interface{} // 设置 model
-	db    *database.Db
+	// db    *database.Db
 	// 暂时无需制定 pk, 因为 gorm 会自动根据主键查询
 	// PkName string // 设置主键名称, 默认为 id
 }
@@ -49,11 +49,12 @@ func (v *RetrieveAPIView) GetBy(ctx iris.Context, pk interface{}) response.IRFRe
 		err = errors.New("APIView: model 未设置")
 		return response.ResponseResult(nil, 0, err)
 	}
-	if v.conf.db == nil {
-		err = errors.New("APIView: db 未设置")
-		return response.ResponseResult(nil, 0, err)
+	db := database.GetDb()
+	// if db == nil {
+	// 	err = errors.New("APIView: db 未设置")
+	// 	return response.ResponseResult(nil, 0, err)
 
-	}
+	// }
 	// if v.config.PkName == "" {
 	// 	panic("APIView: 主见名称未设置 pkName")
 	// }
@@ -72,7 +73,7 @@ func (v *RetrieveAPIView) GetBy(ctx iris.Context, pk interface{}) response.IRFRe
 	mi := returnValue.Interface()
 	// db := database.GetDb()
 	// gorm会自动根据主键查询
-	result := v.conf.db.Debug().First(mi, pk)
+	result := db.First(mi, pk)
 	// var err *rferrors.ApiError
 
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
