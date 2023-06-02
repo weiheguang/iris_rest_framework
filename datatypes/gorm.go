@@ -72,6 +72,9 @@ func (ct *IRFTime) Scan(value interface{}) error {
 
 // 实现 driver.Valuer 接口, Value 接口不使用指针
 func (ct IRFTime) Value() (driver.Value, error) {
+	if ct.Time.IsZero() {
+		return nil, nil
+	}
 	xx := ct.Format(CCL_TIME_FORMART)
 	// myLogger.Error("ctkkkkk=", xx)
 	return xx, nil
