@@ -193,16 +193,21 @@ func (m *Middleware) CheckJWT(ctx iris.Context) error {
 	}
 	// 解析token数据, 类型断言使用指针
 	claims, ok := parsedToken.Claims.(*jwt.RegisteredClaims)
-	fmt.Printf("ok: %v\n", ok)
+	// fmt.Printf("ok: %v\n", ok)
 	// fmt.Printf("claims: %v\n", claims)
 	if ok && parsedToken.Valid {
 		fmt.Printf("token有效, %v %v\n", claims.ID, claims.ExpiresAt)
 		logf(ctx, "%v, %v", claims.ID, claims.ExpiresAt)
-		// ctx.Values().Set(m.Config.UserIDKey, claims.ID)
-		// ctx.Values().Set(m.Config.ContextKey, claims)
-		// 
+		// 把UserID放到header里面
 		ctx.Header(m.Config.UserIDKey, claims.ID)
+		// 解析后的token,暂时放到Values里面,如果有需求,以后可以放到header里面
 		ctx.Values().Set(m.Config.ContextKey, claims)
+	} else {
+		fmt.Printf("token无效\n")
+		// logf(ctx, "token无效")
+		ctx.Header(m.Config.ContextKey, "")
+		ctx.Values().Set(m.Config.UserIDKey, "")
+		return ErrTokenInvalid
 	}
 	// If we get here, everything worked and we can set the
 	// user property in context.

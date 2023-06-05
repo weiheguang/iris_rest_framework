@@ -28,6 +28,7 @@ func TestListView(t *testing.T) {
 	token := GenTokenHS256(secret, id, expireIn, issuer)
 	tokenmsg := fmt.Sprintf("Bearer %s", token)
 	// fmt.Println(tokenmsg)
-	// e.GET("/api/ping").WithHeader("Authorization", tokenmsg).Expect().Header(DefayktUserIDKey).IsEqual(id)
-	fmt.Println(e.GET("/api/ping").WithHeader("Authorization", tokenmsg).Expect().Headers())
+	e.GET("/api/ping").WithHeader("Authorization", tokenmsg).Expect().
+		Header(DefayktUserIDKey).IsEqual(id)
+	// fmt.Println(e.GET("/api/ping").WithHeader("Authorization", tokenmsg).Expect().Headers())
 }

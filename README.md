@@ -31,6 +31,10 @@
     fmt.Println(c.Debug)
 ```
 
+### 配置项
+
+* SQL_DEBUG: 是否开启sql调试, 默认为 false, dababase模块使用
+
 ## db 数据库
 
 使用例子:
