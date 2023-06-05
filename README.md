@@ -4,13 +4,13 @@
 
 基于iris和gorm的 api框架
 
-## 安装教程
+## 安装
 
-1. xxxx
-2. xxxx
-3. xxxx
+```shell
+    go get github.com/weiheguang/iris_rest_framework
+```
 
-## Settings 配置
+## Settings 使用
 
 使用例子1 :
 
@@ -66,7 +66,6 @@
 ```go
 conf := &ListAPIViewConf{
     Model: User{},           // 要查询的表
-    db:    *gorm.Db,         // 数据库连接
     // 设置查询字段
     FilterFields: []string{"name", "age", "id"},
 }
@@ -89,19 +88,32 @@ data := rv.List(ctx)
 * 字符串以xxx开头: name__startswith=xxx
 * 字符串以xxx结尾: name__endswith=xxx
 * in: age__in=18,19,20
+* 如有其他需求,欢迎提issue
 
 ### RetrieveAPIView
 
 根据pk获取单条数据, 使用例子如下:
 
 ```go
-pk := ctx.Params().GetUint64Default("id", 0) // 获取url中的id
-conf := &RetrieveAPIViewConf{
-    Model: rftests.User{},      // 要查询的表
-    db:    database.GetDb(),    // 数据库连接
-}
-rv := NewRetrieveAPIView(conf)
-data := rv.GetBy(ctx, pk)
+    pk := ctx.Params().GetUint64Default("id", 0) // 获取url中的id
+    conf := &RetrieveAPIViewConf{
+        Model: rftests.User{},      // 要查询的表
+    }
+    rv := NewRetrieveAPIView(conf)
+    data := rv.GetBy(ctx, pk)
+```
+
+## Cache使用说明
+
+### 初始化
+
+```go
+    // 初始化redis连接
+    cache.NewRedisCache(host, password, db)
+    ca := cache.GetCache()
+    val, _ := ca.Ping()
+    fmt.Sprint("ping=: ", val)
+    ca.Set("test", "test", 10)
 ```
 
 ## 测试
