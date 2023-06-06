@@ -199,7 +199,9 @@ func (m *Middleware) CheckJWT(ctx iris.Context) error {
 		fmt.Printf("token有效, %v %v\n", claims.ID, claims.ExpiresAt)
 		logf(ctx, "%v, %v", claims.ID, claims.ExpiresAt)
 		// 把UserID放到header里面
-		ctx.Header(m.Config.UserIDKey, claims.ID)
+		// ctx.Header(m.Config.UserIDKey, claims.ID)
+		// TODO: 测试如何进行. 需要设置到 request header里面.
+		ctx.Request().Header.Set(m.Config.UserIDKey, claims.ID)
 		// 解析后的token,暂时放到Values里面,如果有需求,以后可以放到header里面
 		ctx.Values().Set(m.Config.ContextKey, claims)
 	} else {

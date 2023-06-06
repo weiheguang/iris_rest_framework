@@ -19,6 +19,7 @@ func TestListView(t *testing.T) {
 	issuer := ""
 	var jwtMiddleware = GetJwtMiddleware(secret)
 	app.Use(jwtMiddleware.Serve)
+	
 	app.Get("/api/ping", func(ctx iris.Context) {
 		ctx.JSON(iris.Map{"message": "ok"})
 	})
