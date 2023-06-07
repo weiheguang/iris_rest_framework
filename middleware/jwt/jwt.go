@@ -157,7 +157,7 @@ func (m *Middleware) CheckJWT(ctx iris.Context) error {
 		logf(ctx, "Error extracting JWT: %v", err)
 		return err
 	}
-	logf(ctx, "Token extracted: %s", token)
+	// logf(ctx, "Token extracted: %s", token)
 	if token == "" {
 		// Check if it was required
 		// if m.Config.CredentialsOptional {
@@ -172,6 +172,7 @@ func (m *Middleware) CheckJWT(ctx iris.Context) error {
 		ctx.Values().Set(m.Config.ContextKey, "")
 		// 设置 remote_user 为空
 		ctx.Values().Set(m.Config.UserIDKey, "")
+		ctx.Request().Header.Set(m.Config.UserIDKey, "")
 		return nil
 	}
 	// 解析token
@@ -180,15 +181,15 @@ func (m *Middleware) CheckJWT(ctx iris.Context) error {
 	// fmt.Printf("parsedToken.Valid: %v\n", parsedToken.Valid)
 	if err != nil {
 		// fmt.Printf("Error parsing token: %v\n", err)
-		logf(ctx, "Error parsing token: %v", err)
+		// logf(ctx, "Error parsing token: %v", err)
 		return ErrTokenInvalid
 	}
 	if m.Config.SigningMethod != nil && m.Config.SigningMethod.Alg() != parsedToken.Header["alg"] {
 		err := fmt.Errorf("expected %s signing method but token specified %s",
 			m.Config.SigningMethod.Alg(),
 			parsedToken.Header["alg"])
-		// fmt.Printf("Error validating token algorithm: %v\n", err)
-		logf(ctx, "Error validating token algorithm: %v", err)
+		fmt.Printf("Error validating token algorithm: %v\n", err)
+		// logf(ctx, "Error validating token algorithm: %v", err)
 		return ErrTokenInvalid
 	}
 	// 解析token数据, 类型断言使用指针
@@ -197,17 +198,17 @@ func (m *Middleware) CheckJWT(ctx iris.Context) error {
 	// fmt.Printf("claims: %v\n", claims)
 	if ok && parsedToken.Valid {
 		fmt.Printf("token有效, %v %v\n", claims.ID, claims.ExpiresAt)
-		logf(ctx, "%v, %v", claims.ID, claims.ExpiresAt)
+		// logf(ctx, "%v, %v", claims.ID, claims.ExpiresAt)
 		// 把UserID放到header里面
 		// ctx.Header(m.Config.UserIDKey, claims.ID)
-		// TODO: 测试如何进行. 需要设置到 request header里面.
 		ctx.Request().Header.Set(m.Config.UserIDKey, claims.ID)
 		// 解析后的token,暂时放到Values里面,如果有需求,以后可以放到header里面
 		ctx.Values().Set(m.Config.ContextKey, claims)
 	} else {
-		fmt.Printf("token无效\n")
+		// fmt.Printf("token无效\n")
 		// logf(ctx, "token无效")
-		ctx.Header(m.Config.ContextKey, "")
+		// ctx.Header(m.Config.ContextKey, "")
+		ctx.Request().Header.Set(m.Config.UserIDKey, "")
 		ctx.Values().Set(m.Config.UserIDKey, "")
 		return ErrTokenInvalid
 	}

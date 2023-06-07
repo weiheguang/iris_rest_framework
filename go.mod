@@ -13,6 +13,7 @@ require (
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/gorm v1.25.1
+	gorm.io/plugin/soft_delete v1.2.1
 )
 
 require (
