@@ -1,16 +1,18 @@
 package logging
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/sirupsen/logrus"
 )
 
-var logger *logrus.Logger
+var logger *IRFLogger
 
-func init() {
-	logger = logrus.New()
+type IRFLogger = logrus.Logger
+
+func NewLogger() *IRFLogger {
+	// var logger *Logger
+	logger := logrus.New()
 	// Log as JSON instead of the default ASCII formatter.
 	// logger.SetFormatter(&logrus.JSONFormatter{})
 	logger.SetFormatter(&logrus.TextFormatter{
@@ -29,17 +31,12 @@ func init() {
 	// Only log the warning severity or above.
 	logger.SetLevel(logrus.DebugLevel)
 	// logger.SetReportCaller(true)
-
+	return logger
 }
 
-func SetLogLevel(level logrus.Level) {
+func GetLogger() *IRFLogger {
 	if logger == nil {
-		fmt.Printf("日志没有初始化")
+		logger = NewLogger()
 	}
-	logger.SetLevel(level)
-}
-
-// GetLogger return a logger
-func GetLogger() *logrus.Logger {
 	return logger
 }

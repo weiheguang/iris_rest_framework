@@ -13,7 +13,7 @@ type CacheMem struct {
 
 }
 
-func NewMemCache() {
+func NewMemCache() ICache {
 	// rdb := redis.NewClient(&redis.Options{
 	// 	Addr:     host,
 	// 	Password: password, // no password set
@@ -25,10 +25,7 @@ func NewMemCache() {
 	// if err != nil {
 	// 	return err
 	// }
-	// myLogger.Info("初始化 redis 成功: ", host)
-	// return &
-	// 设置全局 cache
-	cache = &c
+	return &c
 }
 
 func (s *CacheMem) Ping() (string, error) {

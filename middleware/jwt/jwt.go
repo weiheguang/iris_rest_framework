@@ -132,7 +132,6 @@ func OnError(ctx iris.Context, err error) {
 	if err == nil {
 		return
 	}
-
 	ctx.StopExecution()
 	ctx.StatusCode(iris.StatusUnauthorized)
 	// ctx.WriteString(err.Error())

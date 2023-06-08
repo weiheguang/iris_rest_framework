@@ -7,8 +7,8 @@ import (
 // 测试参考
 // https://github.com/kataras/iris/blob/master/_examples/testing/httptest/main_test.go
 func TestListView(t *testing.T) {
-	conf := IrisAppConfig{}
-	
+	// conf := IrisAppConfig{}
+
 	// app := iris_rest_framework.NewIrisApp("")
 	// secret := "123456"
 	// id := "testid"

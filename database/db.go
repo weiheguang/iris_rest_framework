@@ -3,7 +3,6 @@ package database
 import (
 	"fmt"
 
-	"github.com/weiheguang/iris_rest_framework/settings"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -11,21 +10,19 @@ import (
 )
 
 // 全局唯一的db对象
-var db *gorm.DB
+// var db *gorm.DB
 
-// 封装gorm.DB
-// type Db struct {
-// 	// *gorm.DB
-// 	// logger DBLogger
-// }
+type Db = gorm.DB
+
+var db *Db
+
+func Init(userName, password, host, port, dbName string, sqlDebug bool) {
+	db = NewDb(userName, password, host, port, dbName, sqlDebug)
+}
 
 // InitDb init mysql database connection
-func Init(userName, password, host, port, dbName string) *gorm.DB {
+func NewDb(userName, password, host, port, dbName string, sqlDebug bool) *Db {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=true&loc=Local", userName, password, host, port, dbName)
-	// log.Printf("current mysql connection dsn: %s\n", dsn)
-	// var err error
-	// var level int
-	sqlDebug := settings.GetBool("SQL_DEBUG")
 	var mlogger logger.Interface
 	if sqlDebug {
 		mlogger = logger.Default.LogMode(logger.Info)
@@ -46,22 +43,12 @@ func Init(userName, password, host, port, dbName string) *gorm.DB {
 	if err != nil {
 		panic("failed to connect database")
 	}
-	db = gdb
-	return db
+	return gdb
 }
 
-// 初始化全局mock db对象
-// func InitMockDb(modk_db *sql.DB) {
-// 	db, _ = gorm.Open(mysql.New(mysql.Config{
-// 		Conn:                      modk_db,
-// 		SkipInitializeWithVersion: true,
-// 	}), &gorm.Config{})
-// }
-
-// GetDb return instance of database
-func GetDb() *gorm.DB {
-	if db != nil {
-		return db
+func GetDb() *Db {
+	if db == nil {
+		panic("db 没有初始化")
 	}
-	panic("db 没有初始化")
+	return db
 }

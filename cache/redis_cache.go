@@ -7,7 +7,7 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
-func NewRedisCache(host string, password string, db int) error {
+func NewRedisCache(host string, password string, db int) (ICache, error) {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     host,
 		Password: password, // no password set
@@ -16,12 +16,9 @@ func NewRedisCache(host string, password string, db int) error {
 	c := CacheRedis{rdb: rdb}
 	_, err := c.Ping()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	// myLogger.Info("初始化 redis 成功: ", host)
-	// return &
-	cache = &c
-	return nil
+	return &c, nil
 }
 
 type CacheRedis struct {
@@ -42,8 +39,6 @@ func (c *CacheRedis) Set(key string, val interface{}, expiration time.Duration) 
 	ctx := context.Background()
 	err := c.rdb.Set(ctx, key, val, expiration).Err()
 	if err != nil {
-		// myLogger.Error("设置 cache 出错: ", err)
-		// fmt.Println("设置 cache 出错: %v \n", err)
 		return err
 	}
 	return nil
@@ -53,21 +48,11 @@ func (c *CacheRedis) Set(key string, val interface{}, expiration time.Duration) 
 func (c *CacheRedis) Get(key string) (string, error) {
 	ctx := context.Background()
 	return c.rdb.Get(ctx, key).Result()
-	// if err != nil {
-	// 	myLogger.Error("获取 cache key 出错: ", err)
-	// 	return "", err
-	// }
-	// return val, nil
 }
 
 func (c *CacheRedis) GetBytes(key string) ([]byte, error) {
 	ctx := context.Background()
 	return c.rdb.Get(ctx, key).Bytes()
-	// if err != nil {
-	// 	myLogger.Error("获取 cache key 出错: ", err)
-	// 	return "", err
-	// }
-	// return val, nil
 }
 
 func (c *CacheRedis) Close() error {
@@ -76,8 +61,3 @@ func (c *CacheRedis) Close() error {
 	}
 	return nil
 }
-
-// 生成唯一key值
-// func (c *CacheRedis) GetKey() string {
-// 	return "ccl.order.clost_order"
-// }

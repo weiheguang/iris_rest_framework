@@ -3,54 +3,37 @@ package settings
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/spf13/viper"
 )
 
-type Settings struct {
-	*viper.Viper
-}
-
-// var myLogger = logging.GetLogger()
+type Settings = viper.Viper
 
 var s *Settings
 
 // 导出函数, 如果需要使用其他函数. 参考: https://github.com/spf13/viper/blob/master/viper.go
-// var (
-// 	GetString   = viper.GetString   // 获取字符串
-// 	GetBool     = viper.GetBool     // 获取 bool
-// 	GetDuration = viper.GetDuration // 获取时间长度
-// 	GetInt      = viper.GetInt      // 获取整形
-// 	GetInt64    = viper.GetInt64    // 获取64位整形
-// )
+var (
+	GetString               = viper.GetString   // 获取字符串
+	GetBool                 = viper.GetBool     // 获取 bool
+	GetDuration             = viper.GetDuration // 获取时间长度
+	GetInt                  = viper.GetInt      // 获取整形
+	GetInt32                = viper.GetInt32
+	GetInt64                = viper.GetInt64 // 获取64位整形
+	GetUint                 = viper.GetUint
+	GetUint16               = viper.GetUint16
+	GetUint32               = viper.GetUint32
+	GetUint64               = viper.GetUint64
+	GetTime                 = viper.GetTime
+	GetIntSlice             = viper.GetIntSlice
+	GetFloat64              = viper.GetFloat64
+	GetStringSlice          = viper.GetStringSlice
+	GetStringMap            = viper.GetStringMap
+	GetStringMapString      = viper.GetStringMapString
+	GetStringMapStringSlice = viper.GetStringMapStringSlice
+	GetSizeInBytes          = viper.GetSizeInBytes
+)
 
-// 快捷获取字符串
-func GetString(key string) string {
-	return s.GetString(key)
-}
-
-// 快捷获取 bool
-func GetBool(key string) bool {
-	return s.GetBool(key)
-}
-
-// 快捷获取时间长度
-func GetDuration(key string) time.Duration {
-	return s.GetDuration(key)
-}
-
-// 快捷获取整形
-func GetInt(key string) int {
-	return s.GetInt(key)
-}
-
-// 快捷获取64位整形
-func GetInt64(key string) int64 {
-	return s.GetInt64(key)
-}
-
-func Init(fileName string) {
+func NewSettings(fileName string) *Settings {
 	if fileName != "" {
 		viper.SetConfigName(fileName) // name of config file (without extension)
 		viper.AddConfigPath(".")
@@ -63,11 +46,17 @@ func Init(fileName string) {
 	}
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
-
-	s = &Settings{viper.GetViper()}
+	return viper.GetViper()
 }
 
-// 获取 Settings
+func Init(fileName string) *Settings {
+	s = NewSettings(fileName)
+	return s
+}
+
 func GetSettings() *Settings {
+	if s == nil {
+		panic("请先初始化settings")
+	}
 	return s
 }

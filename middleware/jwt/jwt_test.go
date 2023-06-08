@@ -15,7 +15,10 @@ import (
 // 测试参考
 // https://github.com/kataras/iris/blob/master/_examples/testing/httptest/main_test.go
 func TestListView(t *testing.T) {
-	app := iris_rest_framework.NewIrisApp("")
+	conf := iris_rest_framework.IrisAppConfig{
+		SettingsName: "test_settings",
+	}
+	app := iris_rest_framework.NewIrisApp(&conf)
 	secret := "123456"
 	id := "testid"
 	expireIn := time.Duration(3600) * time.Second

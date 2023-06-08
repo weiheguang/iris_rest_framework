@@ -83,7 +83,7 @@ func setUpList(dbName string) {
 	dbHost := settings.GetString("DATABASE_HOST")
 	dbPort := settings.GetString("DATABASE_PORT")
 	// dbName := ""
-	database.Init(dbUser, dbPwd, dbHost, dbPort, "")
+	database.Init(dbUser, dbPwd, dbHost, dbPort, "", true)
 
 	// 创建测试数据
 	db := database.GetDb()

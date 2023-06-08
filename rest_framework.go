@@ -2,12 +2,12 @@ package iris_rest_framework
 
 import (
 	"github.com/iris-contrib/middleware/cors"
-	"github.com/iris-contrib/swagger/v12"
-	"github.com/iris-contrib/swagger/v12/swaggerFiles"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/middleware/recover"
+	"github.com/weiheguang/iris_rest_framework/auth"
 	"github.com/weiheguang/iris_rest_framework/cache"
 	"github.com/weiheguang/iris_rest_framework/database"
+	"github.com/weiheguang/iris_rest_framework/logging"
 	"github.com/weiheguang/iris_rest_framework/settings"
 	// "gorm.io/gorm/logger"
 )
@@ -19,14 +19,28 @@ type IrisAppConfig struct {
 	NotFoundHandler iris.Handler
 	// 默认值: internalServerError
 	InternalServerErrorHandler iris.Handler
-	// 是否启用swagger, 默认值: false
-	EnableSwagger bool
-	// 是否启用redis, 默认值: false
-	EnableRedis bool
-	// 是否启用gorm日志, 默认值: false
-	EnableGormLog bool
+	// 是否启用swagger, 默认值: false, swagger 无法做到完全与main函数分离,不在这里初始化
+	// EnableSwagger bool
+	// 启用cache, 选项: cache.CacheTypeMem, cache.CacheTypeRedis, 默认值: cache.CacheTypeMem
+	CacheType string
 	// 是否初始化数据库, 默认值: false
-	EnableInitDb bool
+	EnableDb bool
+	// Auth处理中间件, 默认值: nil
+	Auth auth.IAuth
+}
+
+func GetLogger() *logging.IRFLogger {
+	return logging.GetLogger()
+}
+
+// 获取全局唯一的cache, 默认返回memcache
+func GetCache() cache.ICache {
+	return cache.GetCache()
+}
+
+// 获取全局唯一的settings
+func GetSettings() *settings.Settings {
+	return settings.GetSettings()
 }
 
 /*
@@ -37,9 +51,35 @@ type IrisAppConfig struct {
 @params settingsName 配置文件名称
 */
 func NewIrisApp(c *IrisAppConfig) *iris.Application {
+	if c == nil {
+		c = &IrisAppConfig{}
+	}
+	// 初始化配置文件
+	if c.SettingsName == "" {
+		c.SettingsName = "settings.yaml"
+	}
+	settings.Init(c.SettingsName)
 
-	settings.Init()
-	initDb()
+	// 初始化数据库
+	if c.EnableDb {
+		dbUser := settings.GetString("DATABASE_USER")
+		dbPwd := settings.GetString("DATABASE_PASSWORD")
+		dbHost := settings.GetString("DATABASE_HOST")
+		dbPort := settings.GetString("DATABASE_PORT")
+		dbName := settings.GetString("DATABASE_DBNAME")
+		sqlDebug := settings.GetBool("SQL_DEBUG")
+		database.Init(dbUser, dbPwd, dbHost, dbPort, dbName, sqlDebug)
+	}
+	// 初始化缓存
+	if c.CacheType == cache.CacheTypeRedis {
+		host := settings.GetString("REDIS_HOST")
+		password := settings.GetString("REDIS_PASSWORD")
+		db := settings.GetInt("REDIS_DB")
+		cache.InitRedis(host, password, db)
+	} else {
+		cache.InitMem()
+	}
+	// 初始化app
 	app := iris.New()
 	app.Logger().SetLevel("info")
 	app.Use(recover.New())
@@ -48,33 +88,26 @@ func NewIrisApp(c *IrisAppConfig) *iris.Application {
 	app.UseRouter(crs)
 	// 接口允许options方法
 	app.AllowMethods(iris.MethodOptions)
-	return app
-}
-
-func initSettings(settingsName string) {
-	settings.Init(settingsName)
-}
-
-func initDb() {
-	dbUser := settings.GetString("DATABASE_USER")
-	dbPwd := settings.GetString("DATABASE_PASSWORD")
-	dbHost := settings.GetString("DATABASE_HOST")
-	dbPort := settings.GetString("DATABASE_PORT")
-	dbName := settings.GetString("DATABASE_DBNAME")
-	database.Init(dbUser, dbPwd, dbHost, dbPort, dbName)
-}
-
-func initCache() {
-	// 初始化redis，不需要可删除
-	host := settings.GetString("REDIS_HOST")
-	password := settings.GetString("REDIS_PASSWORD")
-	db := settings.GetInt("REDIS_DB")
-	cache.NewRedisCache(host, password, db)
-	ca := cache.GetCache()
-	_, err := ca.Ping()
-	if err != nil {
-		panic(err)
+	// 初始化swagger
+	// if c.EnableSwagger {
+	// 	config := &swagger.Config{
+	// 		// The url pointing to API definition.
+	// 		URL: c.settings.GetString("SWAGGER_URL"),
+	// 		// DeepLinking: true,
+	// 	}
+	// 	swaggerUI := swagger.CustomWrapHandler(config, swaggerFiles.Handler)
+	// 	app.Get("/swagger", swaggerUI)
+	// 	app.Get("/swagger/{any:path}", swaggerUI)
+	// }
+	// 默认404
+	if c.NotFoundHandler == nil {
+		app.OnErrorCode(iris.StatusNotFound, notFound)
 	}
+	// 默认500
+	if c.InternalServerErrorHandler == nil {
+		app.OnErrorCode(iris.StatusInternalServerError, internalServerError)
+	}
+	return app
 }
 
 func notFound(ctx iris.Context) {
@@ -90,18 +123,4 @@ func internalServerError(ctx iris.Context) {
 		"code":    -1,
 		"message": "error",
 	})
-}
-
-func initSwagger(app *iris.Application) {
-	config := &swagger.Config{
-		// The url pointing to API definition.
-		URL: settings.GetString("SWAGGER_URL"),
-		// DeepLinking: true,
-	}
-	swaggerUI := swagger.CustomWrapHandler(config, swaggerFiles.Handler)
-	app.Get("/swagger", swaggerUI)
-	// app.Get("/swagger", func(ctx iris.Context) {
-	// 	ctx.JSON(iris.Map{"message": "xxxx"})
-	// })
-	app.Get("/swagger/{any:path}", swaggerUI)
 }

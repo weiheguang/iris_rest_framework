@@ -12,28 +12,31 @@
 
 ## Settings 使用
 
-使用例子1 :
-
-```go
-    settings.Init("test_settings")  // 初始化配置, 全局仅执行一次
-    // 直接获取配置
-    s := settings.GetSettings()
-    debug := s.GetBool("DEBUG")
-    fmt.Println(debug)
-```
-
 使用例子2:
 
 ```go
-    settings.Init("test_settings")  // 初始化配置, 全局仅执行一次
     // 通过 Settings 模块的快捷方法获取配置
     debug := settings.GetBool("DEBUG")
-    fmt.Println(c.Debug)
 ```
 
 ### 配置项
 
-* SQL_DEBUG: 是否开启sql调试, 默认为 false, dababase模块使用
+```yaml
+    # 数据库配置
+    DATABASE_USER: "user"         # 数据库用户名
+    DATABASE_PASSWORD: "password" # 数据库密码
+    DATABASE_HOST: ""             # 数据库链接地址
+    DATABASE_PORT: 3306           # 数据库端口
+    DATABASE_DBNAME: "db"         # 数据库名字
+    SQL_DEBUG: false              # 是否开启sql语句打印
+    DEBUG: false                  # 是否开启debug模式
+
+    # Redis缓存配置
+    REDIS_HOST: ""             # redis链接地址
+    REDIS_PASSWORD: "password" # redis密码
+    REDIS_DB: 0                # redis数据库
+
+```
 
 ## db 数据库
 
@@ -41,18 +44,7 @@
 
 ```go
     // 初始化数据库连接
-    dbUser := settings.GetString("DATABASE_USER")
-    dbPwd := settings.GetString("DATABASE_PASSWORD")
-    dbHost := settings.GetString("DATABASE_HOST")
-    dbPort := settings.GetString("DATABASE_PORT")
-    dbName := settings.GetString("DATABASE_NAME")
-    database.InitDb(dbUser, dbPwd, dbHost, dbPort, dbName)
-    // 使用db
-    type User struct {
-        Id   uint64
-        Name string
-        Age  int
-    }
+    db := database.GetDb()
     u := User{Id: 1}
     db.Find(&u)
 ```
@@ -65,7 +57,8 @@
 
 ```go
 conf := &ListAPIViewConf{
-    Model: User{},           // 要查询的表
+    // 要查询的表
+    Model: User{},           
     // 设置查询字段
     FilterFields: []string{"name", "age", "id"},
 }
@@ -109,10 +102,7 @@ data := rv.List(ctx)
 
 ```go
     // 初始化redis连接
-    cache.NewRedisCache(host, password, db)
     ca := cache.GetCache()
-    val, _ := ca.Ping()
-    fmt.Sprint("ping=: ", val)
     ca.Set("test", "test", 10)
 ```
 
@@ -123,9 +113,3 @@ data := rv.List(ctx)
 * 运行一个包内测试: go test -v ./middleware/jwt
 * 运行一个单独的测试: go test github.com/weiheguang/iris_rest_framework/views -run TestGetByPk
 
-## 参与贡献
-
-1. Fork 本仓库
-2. 新建 Feat_xxx 分支
-3. 提交代码
-4. 新建 Pull Request
