@@ -8,6 +8,7 @@ import (
 	"github.com/weiheguang/iris_rest_framework/cache"
 	"github.com/weiheguang/iris_rest_framework/database"
 	"github.com/weiheguang/iris_rest_framework/logging"
+	"github.com/weiheguang/iris_rest_framework/middleware/jwt"
 	"github.com/weiheguang/iris_rest_framework/settings"
 	// "gorm.io/gorm/logger"
 )
@@ -27,6 +28,8 @@ type IrisAppConfig struct {
 	EnableDb bool
 	// Auth处理中间件, 默认值: nil
 	Auth auth.IAuth
+	// 启用jwt中间件
+	EnableJwt bool
 }
 
 func GetLogger() *logging.IRFLogger {
@@ -99,6 +102,15 @@ func NewIrisApp(c *IrisAppConfig) *iris.Application {
 	// 	app.Get("/swagger", swaggerUI)
 	// 	app.Get("/swagger/{any:path}", swaggerUI)
 	// }
+	if c.EnableJwt {
+		secret := settings.GetString("JWT_SECRET")
+		jwtMiddleware := jwt.GetJwtMiddleware(secret)
+		app.Use(jwtMiddleware.Serve)
+	}
+	// 初始化auth
+	if c.Auth != nil {
+		app.Use(c.Auth.Auth)
+	}
 	// 默认404
 	if c.NotFoundHandler == nil {
 		app.OnErrorCode(iris.StatusNotFound, notFound)

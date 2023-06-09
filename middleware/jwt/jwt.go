@@ -179,7 +179,7 @@ func (m *Middleware) CheckJWT(ctx iris.Context) error {
 	// fmt.Printf("Error parsing token: %v\n", err)
 	// fmt.Printf("parsedToken.Valid: %v\n", parsedToken.Valid)
 	if err != nil {
-		// fmt.Printf("Error parsing token: %v\n", err)
+		fmt.Printf("Error parsing token: %v\n", err)
 		// logf(ctx, "Error parsing token: %v", err)
 		return ErrTokenInvalid
 	}

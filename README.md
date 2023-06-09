@@ -10,6 +10,32 @@
     go get github.com/weiheguang/iris_rest_framework
 ```
 
+## NewIrisApp
+
+返回iris的app对象, 使用例子如下:
+
+```go
+    c := IrisAppConfig{
+        SettingsName string
+        // 默认值: notFound
+        NotFoundHandler iris.Handler
+        // 默认值: internalServerError
+        InternalServerErrorHandler iris.Handler
+        // 是否启用swagger, 默认值: false, swagger 无法做到完全与main函数分离,不在这里初始化
+        // EnableSwagger bool
+        // 启用cache, 选项: cache.CacheTypeMem, cache.CacheTypeRedis, 默认值: cache.CacheTypeMem
+        CacheType string
+        // 是否初始化数据库, 默认值: false
+        EnableDb bool
+        // Auth处理中间件, 默认值: nil
+        Auth auth.IAuth
+        // 启用jwt中间件, jwt中间件依赖环境变量: JWT_SECRET
+        EnableJwt bool
+    }
+    app := NewIrisApp(&c)
+    app.Run(iris.Addr(":8080"))
+```
+
 ## Settings 使用
 
 使用例子2:
@@ -35,6 +61,8 @@
     REDIS_HOST: ""             # redis链接地址
     REDIS_PASSWORD: "password" # redis密码
     REDIS_DB: 0                # redis数据库
+
+    JWT_SECRET: "123456"       # jwt secret
 
 ```
 

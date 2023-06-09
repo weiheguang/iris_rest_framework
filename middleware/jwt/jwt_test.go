@@ -7,7 +7,6 @@ import (
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/httptest"
-	"github.com/weiheguang/iris_rest_framework"
 	"github.com/weiheguang/iris_rest_framework/auth"
 	// "github.com/weiheguang/iris_rest_framework/middleware/jwt"
 )
@@ -15,10 +14,14 @@ import (
 // 测试参考
 // https://github.com/kataras/iris/blob/master/_examples/testing/httptest/main_test.go
 func TestListView(t *testing.T) {
-	conf := iris_rest_framework.IrisAppConfig{
-		SettingsName: "test_settings",
-	}
-	app := iris_rest_framework.NewIrisApp(&conf)
+	// conf := iris_rest_framework.IrisAppConfig{
+	// 	SettingsName: "test_settings",
+	// 	EnableDb:     false,
+	// 	Auth:         auth.NewUserIDAuth(),
+	// 	EnableJwt:    true,
+	// }
+	// app := iris_rest_framework.NewIrisApp(&conf)
+	app := iris.New()
 	secret := "123456"
 	id := "testid"
 	expireIn := time.Duration(3600) * time.Second

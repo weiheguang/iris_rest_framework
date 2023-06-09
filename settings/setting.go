@@ -40,7 +40,7 @@ func NewSettings(fileName string) *Settings {
 		err := viper.ReadInConfig() // Find and read the config file
 		if err != nil {             // Handle errors reading the config file
 			// panic(fmt.Errorf("配置文件不存在: %s", err))
-			fmt.Printf("配置文件不存在: %s", err)
+			fmt.Printf("配置文件不存在: %s\n", err)
 			// myLogger.Error("当前文件夹没有找到 配置文件")
 		}
 	}
