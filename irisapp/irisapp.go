@@ -1,14 +1,13 @@
-package iris_rest_framework
+package iris_app
 
 import (
 	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/middleware/recover"
-	"github.com/weiheguang/iris_rest_framework/auth"
 	"github.com/weiheguang/iris_rest_framework/cache"
 	"github.com/weiheguang/iris_rest_framework/database"
 	"github.com/weiheguang/iris_rest_framework/logging"
-	"github.com/weiheguang/iris_rest_framework/middleware/jwt"
+	"github.com/weiheguang/iris_rest_framework/middleware/backend"
 	"github.com/weiheguang/iris_rest_framework/settings"
 	// "gorm.io/gorm/logger"
 )
@@ -27,7 +26,7 @@ type IrisAppConfig struct {
 	// 是否初始化数据库, 默认值: false
 	EnableDb bool
 	// Auth处理中间件, 默认值: nil
-	Auth auth.IAuth
+	Auth backend.IAuth
 	// 启用jwt中间件
 	EnableJwt bool
 }
@@ -102,11 +101,11 @@ func NewIrisApp(c *IrisAppConfig) *iris.Application {
 	// 	app.Get("/swagger", swaggerUI)
 	// 	app.Get("/swagger/{any:path}", swaggerUI)
 	// }
-	if c.EnableJwt {
-		secret := settings.GetString("JWT_SECRET")
-		jwtMiddleware := jwt.GetJwtMiddleware(secret)
-		app.Use(jwtMiddleware.Serve)
-	}
+	// if c.EnableJwt {
+	// secret := settings.GetString("JWT_SECRET")
+	// jwtMiddleware := jwt.GetJwtMiddleware(secret)
+	// app.Use(jwtMiddleware.Serve)
+	// }
 	// 初始化auth
 	if c.Auth != nil {
 		app.Use(c.Auth.Auth)

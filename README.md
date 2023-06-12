@@ -63,6 +63,9 @@
     REDIS_DB: 0                # redis数据库
 
     JWT_SECRET: "123456"       # jwt secret
+    JWT_EXPIRE_IN: "7200"      # jwt 过期时间, 单位: 秒
+
+    APP_NAME: "app"            # app 名字
 
 ```
 

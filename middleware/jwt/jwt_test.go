@@ -7,7 +7,7 @@ import (
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/httptest"
-	"github.com/weiheguang/iris_rest_framework/auth"
+	"github.com/weiheguang/iris_rest_framework/app/auth"
 	// "github.com/weiheguang/iris_rest_framework/middleware/jwt"
 )
 
