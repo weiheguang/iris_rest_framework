@@ -5,9 +5,10 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/middleware/recover"
 	"github.com/weiheguang/iris_rest_framework/cache"
+	"github.com/weiheguang/iris_rest_framework/middleware/authentication"
+
 	"github.com/weiheguang/iris_rest_framework/database"
 	"github.com/weiheguang/iris_rest_framework/logging"
-	"github.com/weiheguang/iris_rest_framework/middleware/backend"
 	"github.com/weiheguang/iris_rest_framework/settings"
 	// "gorm.io/gorm/logger"
 )
@@ -26,7 +27,7 @@ type IrisAppConfig struct {
 	// 是否初始化数据库, 默认值: false
 	EnableDb bool
 	// Auth处理中间件, 默认值: nil
-	Auth backend.IAuth
+	Auth authentication.IAuth
 	// 启用jwt中间件
 	EnableJwt bool
 }
@@ -108,7 +109,8 @@ func NewIrisApp(c *IrisAppConfig) *iris.Application {
 	// }
 	// 初始化auth
 	if c.Auth != nil {
-		app.Use(c.Auth.Auth)
+		auth := authentication.AuthMiddleware(c.Auth)
+		app.Use(auth)
 	}
 	// 默认404
 	if c.NotFoundHandler == nil {

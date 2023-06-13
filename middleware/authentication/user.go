@@ -1,4 +1,4 @@
-package auth
+package authentication
 
 import (
 	"errors"
@@ -7,31 +7,36 @@ import (
 
 var ErrNotSupported = errors.New("not supported")
 
+type IUser interface {
+	ID() string
+	Username() string
+}
+
 // 实现 iris 的 User 接口: https://github.com/kataras/iris/blob/master/context/context_user.go
 type User struct {
-	au *AuthUser // User Model
+	u IUser // User Model
 }
 
-func NewUser(user_id string) *User {
-	u := &User{}
-	userModel := AuthUser{ID: user_id}
-	u.SetUserModel(&userModel)
-	return u
-}
+// func NewUser(user_id string) *User {
+// 	u := &User{}
+// 	userModel := AuthUser{ID: user_id}
+// 	u.SetUserModel(&userModel)
+// 	return u
+// }
 
 // 获取 UserModel
-func (u *User) GetUserModel() *AuthUser {
-	return u.au
+func (u *User) GetUserModel() IUser {
+	return u.u
 }
 
 // 设置用户 UserModel
-func (u *User) SetUserModel(au *AuthUser) {
-	u.au = au
+func (u *User) SetUserModel(au IUser) {
+	u.u = au
 }
 
 // GetRaw should return the raw instance of the user, if supported.
 func (u *User) GetRaw() (interface{}, error) {
-	return u.au, ErrNotSupported
+	return u.u, ErrNotSupported
 }
 
 // GetAuthorization should return the authorization method,
@@ -47,13 +52,13 @@ func (u *User) GetAuthorizedAt() (time.Time, error) {
 // GetID should return the ID of the User.
 
 func (u *User) GetID() (string, error) {
-	return u.au.ID, nil
+	return u.u.ID(), nil
 }
 
 // GetUsername should return the name of the User.
 
 func (u *User) GetUsername() (string, error) {
-	return u.au.Username, nil
+	return u.u.Username(), nil
 }
 
 // GetPassword should return the encoded or raw password
@@ -94,5 +99,5 @@ func (u *User) GetField(key string) (interface{}, error) {
 
 func (u *User) IsAuthorized() bool {
 	// myLogger.Debug("self=", u)
-	return u.au.ID != ""
+	return u.u.ID() != ""
 }

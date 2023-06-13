@@ -141,6 +141,7 @@ data := rv.List(ctx)
 
 * 运行所有测试: go test -v ./...
 * 运行一个包内测试: go test -v ./views
+* 运行一个包内测试: go test -v ./iris_app
 * 运行一个包内测试: go test -v ./middleware/jwt
 * 运行一个单独的测试: go test github.com/weiheguang/iris_rest_framework/views -run TestGetByPk
 
