@@ -1,4 +1,4 @@
-package irisapp
+package user
 
 import (
 	"fmt"
@@ -9,42 +9,13 @@ import (
 	"github.com/kataras/iris/v12/httptest"
 	"github.com/weiheguang/iris_rest_framework/auth"
 	"github.com/weiheguang/iris_rest_framework/cache"
+	"github.com/weiheguang/iris_rest_framework/irisapp"
 	"github.com/weiheguang/iris_rest_framework/middleware/jwt"
 	"github.com/weiheguang/iris_rest_framework/settings"
 )
 
 // 测试参考
 // https://github.com/kataras/iris/blob/master/_examples/testing/httptest/main_test.go
-
-const (
-	USER_ID = "testid"
-)
-
-type MyUserModel struct {
-	Id string
-}
-
-func (m *MyUserModel) GetID() string {
-	return m.Id
-}
-
-func (m *MyUserModel) GetUsername() string {
-	return m.Id
-}
-
-func (m *MyUserModel) IsAuthorized() bool {
-	return true
-}
-
-func testUserID(ctx iris.Context) *auth.User {
-	userId := ctx.GetHeader(jwt.DefaultUserIDKey)
-	um := MyUserModel{
-		Id: userId,
-	}
-	user := &auth.User{}
-	user.SetUserModel(&um)
-	return user
-}
 
 /*
 参数:
@@ -56,15 +27,15 @@ func testUserID(ctx iris.Context) *auth.User {
 	http status: httptest.StatusOk
 	remote_user: "testid"
 */
-func TestApp(t *testing.T) {
-	c := IrisAppConfig{
+func TestUser(t *testing.T) {
+	c := irisapp.IrisAppConfig{
 		SettingsName: "test_settings",
 		CacheType:    cache.CacheTypeMem,
 		EnableDb:     false,
-		AuthFunc:     testUserID,
+		AuthFunc:     UserIDAuth,
 		EnableJwt:    true,
 	}
-	app := NewIrisApp(&c)
+	app := irisapp.NewIrisApp(&c)
 	secret := settings.GetString("JWT_SECRET")
 	expireIn := time.Duration(3600) * time.Second
 	issuer := ""

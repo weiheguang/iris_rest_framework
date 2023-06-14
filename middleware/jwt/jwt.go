@@ -101,7 +101,7 @@ func New(cfg ...Config) *Middleware {
 		c.ContextKey = DefaultContextKey
 	}
 	if c.UserIDKey == "" {
-		c.UserIDKey = DefayktUserIDKey
+		c.UserIDKey = DefaultUserIDKey
 	}
 
 	if c.ErrorHandler == nil {

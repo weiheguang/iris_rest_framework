@@ -1,4 +1,4 @@
-package auth
+package user
 
 // 手机号登录
 type LoginByPwdSerializer struct {

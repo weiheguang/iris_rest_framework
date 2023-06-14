@@ -34,6 +34,10 @@ func NewLogger() *IRFLogger {
 	return logger
 }
 
+func Init() {
+	logger = NewLogger()
+}
+
 func GetLogger() *IRFLogger {
 	if logger == nil {
 		logger = NewLogger()

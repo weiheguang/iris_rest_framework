@@ -6,7 +6,7 @@ const (
 	// DefaultContextKey jwt
 	DefaultContextKey = "jwt"
 	// 默认的解析后放在 iris header里面的已验证的 user_id 的key 值
-	DefayktUserIDKey = "REMOTE_USER"
+	DefaultUserIDKey = "REMOTE_USER"
 )
 
 type Config struct {

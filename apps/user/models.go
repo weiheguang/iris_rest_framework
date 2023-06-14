@@ -1,4 +1,4 @@
-package auth
+package user
 
 import (
 
@@ -12,6 +12,7 @@ import (
 )
 
 // 用户表
+// 实现 auth.IUserModel
 type AuthUser struct {
 	ID          string                `json:"id" gorm:"primaryKey"`
 	Password    string                `json:"password"`
@@ -21,6 +22,21 @@ type AuthUser struct {
 	IsActive    bool                  `json:"is_active"`
 	CreatedAt   datatypes.IRFTime     `json:"created_at" gorm:"autoCreateTime"`
 	IsDel       soft_delete.DeletedAt `json:"is_del" gorm:"softDelete:flag"`
+}
+
+// 实现 auth.IUserModel
+func (u *AuthUser) GetID() string {
+	return u.ID
+}
+
+// 实现 auth.IUserModel
+func (u *AuthUser) GetUsername() string {
+	return u.Username
+}
+
+// 实现 auth.IUserModel
+func (u *AuthUser) IsAuthorized() bool {
+	return true
 }
 
 // 根据用户名的密码获取User对象

@@ -1,4 +1,4 @@
-package auth
+package user
 
 import (
 	"crypto/md5"
@@ -10,6 +10,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/kataras/iris/v12"
+	"github.com/weiheguang/iris_rest_framework/auth"
 	"github.com/weiheguang/iris_rest_framework/datatypes"
 )
 
@@ -46,15 +47,31 @@ func GenerateUsername(n int) string {
 }
 
 // 从 ctx获取 User
-func GetUser(ctx iris.Context) (*User, error) {
+func GetUser(ctx iris.Context) (*auth.User, error) {
 	// myLogger.Debug("从ctx获取 user")
 	// TODO: 是否需要将 user存入cache
 	xx := ctx.User()
 	// xx 是 User指针, 类型转换的时候需要使用 *User
-	user, ok := xx.(*User)
+	user, ok := xx.(*auth.User)
 	if ok {
 		// myLogger.Debug("ok=", ok)
 		return user, nil
+	}
+	// myLogger.Debug("user=", user)
+	return nil, errors.New("获取 User 出错")
+}
+
+// 从 ctx获取 User
+func GetUserModel(ctx iris.Context) (*AuthUser, error) {
+	// myLogger.Debug("从ctx获取 user")
+	// TODO: 是否需要将 user存入cache
+	xx := ctx.User()
+	// xx 是 User指针, 类型转换的时候需要使用 *User
+	user, ok := xx.(*auth.User)
+	if ok {
+		// myLogger.Debug("ok=", ok)
+		userModel := user.GetUserModel().(*AuthUser)
+		return userModel, nil
 	}
 	// myLogger.Debug("user=", user)
 	return nil, errors.New("获取 User 出错")
