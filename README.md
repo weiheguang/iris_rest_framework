@@ -142,3 +142,4 @@ data := rv.List(ctx)
 * 运行所有测试: go test -v ./... -run=".*" -cover
 * 运行一个包内测试: go test -v ./middleware/jwt -run=".*" -cover
 * 运行一个单独的测试: go test -v ./middleware/jwt -run="TestJwtInvalidToken" -cover
+* go test -v ./apps/user -run=".*" -cover

@@ -2,7 +2,9 @@ package user
 
 import (
 	"github.com/kataras/iris/v12"
+	"github.com/weiheguang/iris_rest_framework/middleware/jwt"
 	"github.com/weiheguang/iris_rest_framework/response"
+	"github.com/weiheguang/iris_rest_framework/settings"
 )
 
 type IAuthController interface {
@@ -30,19 +32,20 @@ func NewAuthController() IAuthController {
 // @Description	```
 // @Router			/auth [post]
 func (c *AuthController) PostLoginbypwd(ctx iris.Context) response.IRFResult {
-	authUserLogin := LoginByPwdSerializer{}
-	if err := ctx.ReadJSON(&authUserLogin); err != nil {
+	us := LoginByPwdSerializer{}
+	if err := ctx.ReadJSON(&us); err != nil {
 		return response.ResponseResult(nil, 1, err)
 	}
 	user := AuthUser{}
-	err := user.GetByPwd(authUserLogin.Phone, authUserLogin.Password)
+	pwd := MakePassword(us.Password)
+	err := user.GetByPwd(us.Phone, pwd)
 	if err != nil {
 		return response.ResponseResult(nil, 1, err)
 	}
-	// secret := settings.GetString("JWT_SECRET")
-	// expireIn := settings.GetDuration("JWT_EXPIRE_IN")
-	// issuer := settings.GetString("APP_NAME")
-	token := "jwt.GenTokenHS256(secret, user.ID, expireIn, issuer)"
+	secret := settings.GetString("JWT_SECRET")
+	expireIn := settings.GetDuration("JWT_EXPIRE_IN")
+	issuer := settings.GetString("APP_NAME")
+	token := jwt.GenTokenHS256(secret, user.ID, expireIn, issuer)
 	data := iris.Map{
 		"token": token,
 	}
