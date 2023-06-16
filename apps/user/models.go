@@ -39,6 +39,11 @@ func (u *AuthUser) IsAuthorized() bool {
 	return true
 }
 
+// 实现 auth.IUserModel
+func (u *AuthUser) GetPhone() string {
+	return u.Phone
+}
+
 // 根据用户名的密码获取User对象
 func (u *AuthUser) GetByPwd(phone string, pwd string) error {
 	db := database.GetDb()

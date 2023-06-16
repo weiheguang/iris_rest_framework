@@ -13,6 +13,7 @@ var ErrNotSupported = errors.New("not supported")
 type IUserModel interface {
 	GetID() string       // 用户id
 	GetUsername() string // 用户名
+	GetPhone() string    // 获取手机号
 	IsAuthorized() bool  // 是否授权
 }
 

@@ -36,6 +36,10 @@ func (m *MyUserModel) IsAuthorized() bool {
 	return true
 }
 
+func (m *MyUserModel) GetPhone() string {
+	return ""
+}
+
 func testUserID(ctx iris.Context) *auth.User {
 	userId := ctx.GetHeader(jwt.DefaultUserIDKey)
 	um := MyUserModel{
