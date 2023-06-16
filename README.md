@@ -27,8 +27,8 @@
         CacheType string
         // 是否初始化数据库, 默认值: false
         EnableDb bool
-        // Auth处理中间件, 默认值: nil
-        Auth auth.IAuth
+        // Auth处理函数, 返回user指针, 默认值: nil
+        AuthFunc UserIdAuth
         // 启用jwt中间件, jwt中间件依赖环境变量: JWT_SECRET
         EnableJwt bool
     }
@@ -137,9 +137,15 @@ data := rv.List(ctx)
     ca.Set("test", "test", 10)
 ```
 
+### 访问控制
+
+1. 权限入库: R1, R2, R3
+2. func checkPre(userId string , r string) bool{}
+
 ## 测试
 
 * 运行所有测试: go test -v ./... -run=".*" -cover
 * 运行一个包内测试: go test -v ./middleware/jwt -run=".*" -cover
 * 运行一个单独的测试: go test -v ./middleware/jwt -run="TestJwtInvalidToken" -cover
 * go test -v ./apps/user -run=".*" -cover
+* go test -v ./irisapp -run=".*" -cover

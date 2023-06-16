@@ -41,6 +41,7 @@ func (m *MyUserModel) GetPhone() string {
 }
 
 func testUserID(ctx iris.Context) *auth.User {
+	ctx.User()
 	userId := ctx.GetHeader(jwt.DefaultUserIDKey)
 	um := MyUserModel{
 		Id: userId,

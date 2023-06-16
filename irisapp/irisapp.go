@@ -30,7 +30,7 @@ type IrisAppConfig struct {
 	CacheType string
 	// 是否初始化数据库, 默认值: false
 	EnableDb bool
-	// Auth处理中间件, 默认值: nil
+	// Auth处理函数, 默认值: nil
 	AuthFunc auth.AuthFunc
 	// 启用jwt中间件
 	EnableJwt bool

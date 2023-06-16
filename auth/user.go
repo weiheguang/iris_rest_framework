@@ -5,7 +5,10 @@ import (
 	"time"
 
 	"github.com/kataras/iris/v12"
+	"github.com/weiheguang/iris_rest_framework/logging"
 )
+
+var logger = logging.GetLogger()
 
 var ErrNotSupported = errors.New("not supported")
 
@@ -100,5 +103,10 @@ func (u *User) IsAuthorized() bool {
 }
 
 func GetUser(ctx iris.Context) *User {
-	return ctx.Values().Get("user").(*User)
+	user, ok := ctx.User().(*User)
+	if ok {
+		return user
+	}
+	// logger.Info("xxxx")
+	return nil
 }
