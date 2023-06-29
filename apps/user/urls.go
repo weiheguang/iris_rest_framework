@@ -6,11 +6,13 @@ import (
 )
 
 func Register(app *iris.Application, apiPrefix string) {
-	authAppParty := app.Party(apiPrefix)
+	userAppParty := app.Party(apiPrefix)
 	{
-		authApp := mvc.New(authAppParty)
-		authController := NewAuthController()
-		authApp.Handle(authController)
-
+		userApp := mvc.New(userAppParty)
+		userController := NewUserController()
+		userApp.Handle(userController)
+		userApp.Controllers[0].GetRoute("PostLoginbypwd").Name = "手机密码登录"
+		userApp.Controllers[0].GetRoute("Get").Name = "获取登录用户的信息"
+		userApp.Controllers[0].GetRoute("GetBy").Name = "根据用户id获取用户信息"
 	}
 }

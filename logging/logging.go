@@ -10,7 +10,7 @@ var logger *IRFLogger
 
 type IRFLogger = logrus.Logger
 
-func NewLogger() *IRFLogger {
+func NewLogger(debug bool) *IRFLogger {
 	// var logger *Logger
 	logger := logrus.New()
 	// Log as JSON instead of the default ASCII formatter.
@@ -22,25 +22,28 @@ func NewLogger() *IRFLogger {
 		// ForceFormatting: true,
 	})
 	// 设置日志函数名字输出
-	logger.SetReportCaller(true)
+	// logger.SetReportCaller(true)
 
 	// Output to stdout instead of the default stderr
 	// Can be any io.Writer, see below for File example
 	logger.SetOutput(os.Stdout)
 
 	// Only log the warning severity or above.
-	logger.SetLevel(logrus.DebugLevel)
-	// logger.SetReportCaller(true)
+	if debug {
+		logger.SetLevel(logrus.DebugLevel)
+	} else {
+		logger.SetLevel(logrus.InfoLevel)
+	}
 	return logger
 }
 
-func Init() {
-	logger = NewLogger()
+func Init(debug bool) {
+	logger = NewLogger(true)
 }
 
 func GetLogger() *IRFLogger {
 	if logger == nil {
-		logger = NewLogger()
+		logger = NewLogger(true)
 	}
 	return logger
 }

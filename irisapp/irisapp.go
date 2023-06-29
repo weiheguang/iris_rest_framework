@@ -67,8 +67,8 @@ func NewIrisApp(c *IrisAppConfig) *iris.Application {
 	}
 	settings.Init(c.SettingsName)
 	// 初始化 logger
-	// logLevel := settings.GetString("LOG_LEVEL")
-	logging.Init()
+	debug := settings.GetBool("DEBUG")
+	logging.Init(debug)
 
 	// 初始化数据库
 	if c.EnableDb {
@@ -115,10 +115,10 @@ func NewIrisApp(c *IrisAppConfig) *iris.Application {
 		app.Use(jwtMiddleware.Serve)
 	}
 	// 初始化auth
-	if c.AuthFunc != nil {
-		auth := auth.AuthMiddlewareFunc(c.AuthFunc)
-		app.Use(auth)
-	}
+	// 如果没有提供 AuthFunc, 则默认为空
+	auth := auth.AuthMiddlewareFunc(c.AuthFunc)
+	app.Use(auth)
+
 	// 默认404
 	if c.NotFoundHandler == nil {
 		app.OnErrorCode(iris.StatusNotFound, notFound)

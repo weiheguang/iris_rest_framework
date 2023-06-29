@@ -14,7 +14,7 @@ import (
 // 用户表
 // 实现 auth.IUserModel
 type AuthUser struct {
-	ID          string                `json:"id" gorm:"primaryKey"`
+	Id          string                `json:"id" gorm:"primaryKey"`
 	Password    string                `json:"password"`
 	Username    string                `json:"username" gorm:"unique"`
 	IsSuperuser bool                  `json:"is_superuser"`
@@ -26,22 +26,17 @@ type AuthUser struct {
 
 // 实现 auth.IUserModel
 func (u *AuthUser) GetID() string {
-	return u.ID
+	return u.Id
 }
 
-// 实现 auth.IUserModel
-func (u *AuthUser) GetUsername() string {
-	return u.Username
-}
-
-// 实现 auth.IUserModel
-func (u *AuthUser) IsAuthorized() bool {
-	return true
-}
-
-// 实现 auth.IUserModel
-func (u *AuthUser) GetPhone() string {
-	return u.Phone
+// 根据 id查询出来 user model
+func (u *AuthUser) GetByID(id string) error {
+	db := database.GetDb()
+	result := db.Where("id = ? and is_active= ?", id, true).First(u)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
 }
 
 // 根据用户名的密码获取User对象
@@ -56,7 +51,7 @@ func (u *AuthUser) GetByPwd(phone string, pwd string) error {
 
 // 根据用户名的密码获取User对象
 func (u *AuthUser) Save() error {
-	if u.ID == "" {
+	if u.Id == "" {
 		return errors.New("用户ID不能为空")
 	}
 	if u.Username == "" {

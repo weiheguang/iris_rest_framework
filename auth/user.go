@@ -2,48 +2,48 @@ package auth
 
 import (
 	"errors"
+	"reflect"
 	"time"
 
 	"github.com/kataras/iris/v12"
 	"github.com/weiheguang/iris_rest_framework/logging"
 )
 
-var logger = logging.GetLogger()
-
 var ErrNotSupported = errors.New("not supported")
 
 // 数据库model
 type IUserModel interface {
-	GetID() string       // 用户id
-	GetUsername() string // 用户名
-	GetPhone() string    // 获取手机号
-	IsAuthorized() bool  // 是否授权
+	GetID() string
 }
 
 // 实现 iris 的 User 接口: https://github.com/kataras/iris/blob/master/context/context_user.go
 type User struct {
-	um IUserModel // User Model
+	UserModel    IUserModel `json:"fields,omitempty"` // User Model
+	Id           string     `json:"id"`
+	Username     string     `json:"username"`
+	Phone        string     `json:"phone"`
+	IsAuthorized bool       `json:"is_authorized"`
 }
 
 // 获取 UserModel
 func (u *User) GetUserModel() IUserModel {
-	return u.um
+	return u.UserModel
 }
 
 // 设置用户 UserModel
 func (u *User) SetUserModel(au IUserModel) {
-	u.um = au
+	u.UserModel = au
 }
 
 // GetRaw should return the raw instance of the user, if supported.
 func (u *User) GetRaw() (interface{}, error) {
-	return u.um, ErrNotSupported
+	return u.UserModel, ErrNotSupported
 }
 
 // GetAuthorization should return the authorization method,
 // e.g. Basic Authentication.
 func (u *User) GetAuthorization() (string, error) {
-	return "jwt", nil
+	return "", ErrNotSupported
 }
 
 func (u *User) GetAuthorizedAt() (time.Time, error) {
@@ -53,13 +53,13 @@ func (u *User) GetAuthorizedAt() (time.Time, error) {
 // GetID should return the ID of the User.
 
 func (u *User) GetID() (string, error) {
-	return u.um.GetID(), nil
+	return u.Id, nil
 }
 
 // GetUsername should return the name of the User.
 
 func (u *User) GetUsername() (string, error) {
-	return u.um.GetUsername(), nil
+	return u.Username, nil
 }
 
 // GetPassword should return the encoded or raw password
@@ -95,18 +95,44 @@ func (u *User) GetToken() ([]byte, error) {
 // Keep in mind that these fields are encoded as a separate JSON key.
 
 func (u *User) GetField(key string) (interface{}, error) {
-	return "", ErrNotSupported
+	if u.UserModel == nil {
+		return nil, ErrNotSupported
+	}
+	if reflect.TypeOf(u.UserModel).String() == "struct" {
+		// 根据字段名字返回字段值
+		return reflect.ValueOf(u.UserModel).FieldByName(key), nil
+	} else {
+		return nil, errors.New("UserModel is not struct")
+	}
 }
 
-func (u *User) IsAuthorized() bool {
-	return u.um.IsAuthorized()
+// 新建用户
+func NewUser(id string, phone string, username string, isAuthorized bool, um IUserModel) *User {
+	return &User{
+		UserModel:    um,
+		Id:           id,
+		Phone:        phone,
+		Username:     username,
+		IsAuthorized: isAuthorized,
+	}
 }
 
+/*
+ * 获取系统用户
+ */
 func GetUser(ctx iris.Context) *User {
 	user, ok := ctx.User().(*User)
 	if ok {
 		return user
 	}
-	// logger.Info("xxxx")
+	logging.GetLogger().Error("user is not *User type")
+	// 返回空 未授权的 User
+	user = &User{
+		UserModel:    nil,
+		Id:           "",
+		Username:     "",
+		Phone:        "",
+		IsAuthorized: false,
+	}
 	return nil
 }

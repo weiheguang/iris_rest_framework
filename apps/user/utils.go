@@ -90,7 +90,7 @@ func LoginRequire(ctx iris.Context) {
 			"message": "未登录(-6)",
 		})
 	}
-	if user.IsAuthorized() {
+	if user.IsAuthorized {
 		ctx.Next()
 	} else {
 		ctx.StopExecution()
@@ -109,7 +109,7 @@ func CreateAuthUser(phone string, password string, isAdmin bool) (*AuthUser, err
 	key = strings.ReplaceAll(key, "-", "")
 	pwd := MakePassword(password)
 	authUser := AuthUser{
-		ID:          key,
+		Id:          key,
 		Password:    pwd,
 		Username:    GenerateUsername(10),
 		IsSuperuser: isAdmin,
