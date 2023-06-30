@@ -181,3 +181,42 @@ func TestApp3(t *testing.T) {
 	e.GET("/api/ping").WithHeader("Authorization", tokenmsg).Expect().
 		Status(httptest.StatusOK).JSON().Object().IsValueEqual("remote_user", "").IsValueEqual("is_authorized", false)
 }
+
+/*
+参数:
+
+	token: 不传
+	AuthFunc: 返回 nil
+
+结果
+
+	http status: httptest.StatusOk
+	remote_user: ""
+	is_authorized: false
+*/
+
+func TestApp4(t *testing.T) {
+	c := IrisAppConfig{
+		SettingsName: "test_settings",
+		CacheType:    cache.CacheTypeMem,
+		AuthFunc:     testUserIDNil,
+		EnableDb:     false,
+		EnableJwt:    true,
+	}
+	app := NewIrisApp(&c)
+	app.Get("/api/ping", func(ctx iris.Context) {
+		user := auth.GetUser(ctx)
+		userID, _ := user.GetID()
+		ctx.JSON(iris.Map{
+			"message":       "ok",
+			"code":          0,
+			"remote_user":   userID,
+			"is_authorized": user.IsAuthorized,
+		})
+	})
+	e := httptest.New(t, app)
+	// token := genToken()
+	// tokenmsg := fmt.Sprintf("Bearer %s", token)
+	e.GET("/api/ping").Expect().Status(httptest.StatusOK).JSON().Object().
+		IsValueEqual("remote_user", "").IsValueEqual("is_authorized", false).IsValueEqual("remote_user", "")
+}

@@ -39,9 +39,15 @@ func AuthMiddlewareFunc(af AuthFunc) iris.Handler {
 */
 func UserIDAuth(ctx iris.Context) *User {
 	userID := ctx.GetHeader(jwt.DefaultUserIDKey)
+	var isAuthorized bool
+	if userID == "" {
+		isAuthorized = false
+	} else {
+		isAuthorized = true
+	}
 	user := &User{
 		Id:           userID,
-		IsAuthorized: true,
+		IsAuthorized: isAuthorized,
 	}
 	return user
 }
