@@ -11,33 +11,33 @@ import (
 
 var ErrNotSupported = errors.New("not supported")
 
-// 数据库model
-type IUserModel interface {
+// 数据库model, 用来存储动态数据
+type IModel interface {
 	GetID() string
 }
 
 // 实现 iris 的 User 接口: https://github.com/kataras/iris/blob/master/context/context_user.go
 type User struct {
-	UserModel    IUserModel `json:"fields,omitempty"` // User Model
-	Id           string     `json:"id"`
-	Username     string     `json:"username"`
-	Phone        string     `json:"phone"`
-	IsAuthorized bool       `json:"is_authorized"`
+	Model        IModel `json:"fields,omitempty"` // User Model
+	Id           string `json:"id"`
+	Username     string `json:"username"`
+	Phone        string `json:"phone"`
+	IsAuthorized bool   `json:"is_authorized"`
 }
 
 // 获取 UserModel
-func (u *User) GetUserModel() IUserModel {
-	return u.UserModel
+func (u *User) GetModel() IModel {
+	return u.Model
 }
 
 // 设置用户 UserModel
-func (u *User) SetUserModel(au IUserModel) {
-	u.UserModel = au
+func (u *User) SetModel(au IModel) {
+	u.Model = au
 }
 
 // GetRaw should return the raw instance of the user, if supported.
 func (u *User) GetRaw() (interface{}, error) {
-	return u.UserModel, ErrNotSupported
+	return u.Model, ErrNotSupported
 }
 
 // GetAuthorization should return the authorization method,
@@ -95,21 +95,21 @@ func (u *User) GetToken() ([]byte, error) {
 // Keep in mind that these fields are encoded as a separate JSON key.
 
 func (u *User) GetField(key string) (interface{}, error) {
-	if u.UserModel == nil {
+	if u.Model == nil {
 		return nil, ErrNotSupported
 	}
-	if reflect.TypeOf(u.UserModel).String() == "struct" {
+	if reflect.TypeOf(u.Model).String() == "struct" {
 		// 根据字段名字返回字段值
-		return reflect.ValueOf(u.UserModel).FieldByName(key), nil
+		return reflect.ValueOf(u.Model).FieldByName(key), nil
 	} else {
 		return nil, errors.New("UserModel is not struct")
 	}
 }
 
 // 新建用户
-func NewUser(id string, phone string, username string, isAuthorized bool, um IUserModel) *User {
+func NewUser(id string, phone string, username string, isAuthorized bool, um IModel) *User {
 	return &User{
-		UserModel:    um,
+		Model:        um,
 		Id:           id,
 		Phone:        phone,
 		Username:     username,
@@ -128,7 +128,7 @@ func GetUser(ctx iris.Context) *User {
 	logging.GetLogger().Error("user is not *User type")
 	// 返回空 未授权的 User
 	user = &User{
-		UserModel:    nil,
+		Model:        nil,
 		Id:           "",
 		Username:     "",
 		Phone:        "",

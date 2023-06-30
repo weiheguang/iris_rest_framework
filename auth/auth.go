@@ -22,7 +22,7 @@ func AuthMiddlewareFunc(af AuthFunc) iris.Handler {
 		}
 		if user == nil {
 			user = &User{
-				UserModel:    nil,
+				Model:        nil,
 				Id:           "",
 				Username:     "",
 				Phone:        "",

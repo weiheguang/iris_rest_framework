@@ -70,7 +70,7 @@ func GetUserModel(ctx iris.Context) (*AuthUser, error) {
 	user, ok := xx.(*auth.User)
 	if ok {
 		// myLogger.Debug("ok=", ok)
-		userModel := user.GetUserModel().(*AuthUser)
+		userModel := user.GetModel().(*AuthUser)
 		return userModel, nil
 	}
 	// myLogger.Debug("user=", user)

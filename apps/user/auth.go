@@ -17,7 +17,7 @@ func UserAuth(ctx iris.Context) *auth.User {
 		IsAuthorized: false,
 		Username:     "",
 		Phone:        "",
-		UserModel:    nil,
+		Model:        nil,
 	}
 	// 如果没有 userId 则返回
 	if userID == "" {
@@ -29,7 +29,7 @@ func UserAuth(ctx iris.Context) *auth.User {
 		logging.GetLogger().Error(err.Error())
 		return user
 	}
-	user.UserModel = um
+	user.Model = um
 	user.IsAuthorized = true
 	user.Username = um.Username
 	user.Phone = um.Phone
