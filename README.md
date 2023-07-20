@@ -74,7 +74,6 @@
 使用例子:
 
 ```go
-    // 初始化数据库连接
     db := database.GetDb()
     u := User{Id: 1}
     db.Find(&u)
@@ -129,18 +128,10 @@ data := rv.List(ctx)
 
 ## Cache使用说明
 
-### 初始化
-
 ```go
-    // 初始化redis连接
     ca := cache.GetCache()
     ca.Set("test", "test", 10)
 ```
-
-### 访问控制
-
-1. 权限入库: R1, R2, R3
-2. func checkPre(userId string , r string) bool{}
 
 ## 测试
 
@@ -149,3 +140,5 @@ data := rv.List(ctx)
 * 运行一个单独的测试: go test -v ./middleware/jwt -run="TestJwtInvalidToken" -cover
 * go test -v ./apps/user -run=".*" -cover
 * go test -v ./irisapp -run=".*" -cover
+* go test -v ./views -run="TestListView" -cover
+* go test -v ./views -run=".*" -cover

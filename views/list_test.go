@@ -6,9 +6,8 @@ import (
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/httptest"
-	"github.com/kataras/iris/v12/middleware/logger"
-	"github.com/kataras/iris/v12/middleware/recover"
 	"github.com/weiheguang/iris_rest_framework/database"
+	"github.com/weiheguang/iris_rest_framework/irisapp"
 	"github.com/weiheguang/iris_rest_framework/rftests"
 	"github.com/weiheguang/iris_rest_framework/settings"
 )
@@ -103,13 +102,17 @@ func clearUpList(dbName string) {
 }
 
 func TestListView(t *testing.T) {
+	c := irisapp.IrisAppConfig{
+		SettingsName: "test_settings",
+		// CacheType:    cache.CacheTypeMem,
+		// AuthFunc:     testUserIDNil,
+		EnableDb: true,
+		// EnableJwt: true,
+	}
+	app := irisapp.NewIrisApp(&c)
+	// 初始化数据
 	dbName := rftests.GetTestDbName()
 	setUpList(dbName)
-	app := iris.New()
-	app.Logger().SetLevel("debug")
-	app.Use(recover.New())
-	app.Use(logger.New())
-
 	app.Get("/api/pdt", List)
 	// app.Get("/api/pdt2", List2)
 	e := httptest.New(t, app)

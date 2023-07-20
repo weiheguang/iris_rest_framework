@@ -12,9 +12,14 @@ const (
 	INSERT_USER_SQL = `insert into user (name, age) values (?, ?);`
 )
 
+type BaseModel struct {
+	Id  int `json:"id" gorm:"column:id;type:int(11);not null;primaryKey;autoIncrement"`
+	Age int `json:"age" gorm:"column:age;type:int(11);not null;default:0"`
+}
+
 // 测试 User 结构体
 type User struct {
-	Id   int    `json:"id" gorm:"column:id;type:int(11);not null;primaryKey;autoIncrement"`
 	Name string `json:"name" gorm:"column:name;type:varchar(255);not null;default:''"`
-	Age  int    `json:"age" gorm:"column:age;type:int(11);not null;default:0"`
+	BaseModel
 }
+

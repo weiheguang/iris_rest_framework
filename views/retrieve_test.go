@@ -9,18 +9,18 @@ import (
 	"github.com/kataras/iris/v12/middleware/logger"
 	"github.com/kataras/iris/v12/middleware/recover"
 	"github.com/weiheguang/iris_rest_framework/database"
+	"github.com/weiheguang/iris_rest_framework/irisapp"
 	"github.com/weiheguang/iris_rest_framework/rftests"
-	"github.com/weiheguang/iris_rest_framework/settings"
 )
 
 func setUpRetrieve(dbName string) {
 	// settings.Init("test_settings")
-	dbUser := settings.GetString("DATABASE_USER")
-	dbPwd := settings.GetString("DATABASE_PASSWORD")
-	dbHost := settings.GetString("DATABASE_HOST")
-	dbPort := settings.GetString("DATABASE_PORT")
-	// 这个时候db还不存在, 设置为空
-	database.Init(dbUser, dbPwd, dbHost, dbPort, "", true)
+	// dbUser := settings.GetString("DATABASE_USER")
+	// dbPwd := settings.GetString("DATABASE_PASSWORD")
+	// dbHost := settings.GetString("DATABASE_HOST")
+	// dbPort := settings.GetString("DATABASE_PORT")
+	// // 这个时候db还不存在, 设置为空
+	// database.Init(dbUser, dbPwd, dbHost, dbPort, "", true)
 
 	// 创建测试数据
 	db := database.GetDb()
@@ -43,9 +43,17 @@ func clearUpRetrieve(dbName string) {
 	2 添加一个商品
 */
 func TestGetByPk(t *testing.T) {
+	c := irisapp.IrisAppConfig{
+		SettingsName: "test_settings",
+		// CacheType:    cache.CacheTypeMem,
+		// AuthFunc:     testUserIDNil,
+		EnableDb: true,
+		// EnableJwt: true,
+	}
+	app := irisapp.NewIrisApp(&c)
+	// 初始化数据
 	dbName := rftests.GetTestDbName()
 	setUpRetrieve(dbName)
-	app := iris.New()
 	app.Logger().SetLevel("info")
 	app.Use(recover.New())
 	app.Use(logger.New())

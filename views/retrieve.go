@@ -13,14 +13,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// type ListAPIView struct {
-// 	model interface{} // 设置model
-// }
-
-// func (v *ListAPIView) SetModel(mi interface{}) {
-// 	v.model = mi
-// }
-
 // ------------------- 根据主键获取单个对象 -------------------
 type RetrieveAPIView struct {
 	conf *RetrieveAPIViewConf

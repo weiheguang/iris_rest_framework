@@ -48,27 +48,45 @@ func (v *ListAPIView) List(ctx iris.Context) response.IRFResult {
 	// fmt.Println("type of t:", t)
 	// 获取字段数量
 	fieldNum := t.NumField()
-	// fmt.Println("fieldNum:", fieldNum)
+	fmt.Println("fieldNum = ", fieldNum)
 	fieldTagJsonList := make([]string, 0)
 	// 遍历字段
 	for i := 0; i < fieldNum; i++ {
 		// 获取字段
 		field := t.Field(i)
-		// fmt.Println("field:", field)
+		// 判断是否是嵌套结构体
+		if field.Type.Kind() == reflect.Struct {
+			// 获取嵌套结构体的字段数量
+			embedFieldNum := field.Type.NumField()
+			// 遍历嵌套结构体的字段
+			for j := 0; j < embedFieldNum; j++ {
+				// 获取嵌套结构体的字段
+				embedField := field.Type.Field(j)
+				// 获取嵌套结构体的字段名称
+				// embedFieldName := embedField.Name
+				// 获取嵌套结构体的字段 tag
+				embedFieldTag := embedField.Tag
+				// 获取嵌套结构体的字段 tag 中的 json
+				embedFieldTagJson := embedFieldTag.Get("json")
+				// fmt.Println("embedFieldTagJson:", embedFieldTagJson)
+				fieldTagJsonList = append(fieldTagJsonList, embedFieldTagJson)
+			}
+		}
+		fmt.Println("field = ", field)
 		// 获取字段名称
-		// fieldName := field.Name
-		// fmt.Println("fieldName:", fieldName)
+		fieldName := field.Name
+		fmt.Println("fieldName = ", fieldName)
 		// 获取字段 tag
 		fieldTag := field.Tag
-		// fmt.Println("fieldTag:", fieldTag)
+		fmt.Println("fieldTag = ", fieldTag)
 		// 获取字段 tag 中的 json
 		fieldTagJson := fieldTag.Get("json")
 		// fmt.Println("fieldTagJson:", fieldTagJson)
 		// 获取字段 tag 中的 json 中的名称
 		// fieldTagJsonName := strings.Split(fieldTagJson, ",")[0]
 		// fmt.Println("fieldTagJsonName:", fieldTagJsonName)
-		// 判断是否在过滤字段中
 		// fmt.Printf("fieldName=%s , type=%v , fieldTagJson=%s \n", fieldName, field.Type, fieldTagJson)
+		// 添加到 fieldTagJsonList 中
 		fieldTagJsonList = append(fieldTagJsonList, fieldTagJson)
 	}
 	fmt.Println("fieldTagJsonList:", fieldTagJsonList)

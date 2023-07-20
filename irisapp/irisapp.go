@@ -15,7 +15,7 @@ import (
 	// "gorm.io/gorm/logger"
 )
 
-var logger = logging.GetLogger()
+// var logger = logging.GetLogger()
 
 type IrisAppConfig struct {
 	// setting 名字, 默认值 settings.yaml
@@ -50,6 +50,11 @@ func GetSettings() *settings.Settings {
 	return settings.GetSettings()
 }
 
+// 获取全局唯一的settings
+func GetDb() *database.Db {
+	return database.GetDb()
+}
+
 /*
 1. 创建 iris app
 2. 设置日志级别
@@ -69,6 +74,14 @@ func NewIrisApp(c *IrisAppConfig) *iris.Application {
 	// 初始化 logger
 	debug := settings.GetBool("DEBUG")
 	logging.Init(debug)
+	// 初始化app
+	app := iris.New()
+	if debug {
+		app.Logger().SetLevel("debug")
+	} else {
+		app.Logger().SetLevel("info")
+	}
+	app.Use(recover.New())
 
 	// 初始化数据库
 	if c.EnableDb {
@@ -89,10 +102,6 @@ func NewIrisApp(c *IrisAppConfig) *iris.Application {
 	} else {
 		cache.InitMem()
 	}
-	// 初始化app
-	app := iris.New()
-	app.Logger().SetLevel("info")
-	app.Use(recover.New())
 	// 允许跨域
 	crs := cors.AllowAll()
 	app.UseRouter(crs)
