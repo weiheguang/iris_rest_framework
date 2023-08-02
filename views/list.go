@@ -173,6 +173,7 @@ func (v *ListAPIView) List(ctx iris.Context) response.IRFResult {
 	// 处理分页参数
 	page, _ := strconv.Atoi(ctx.URLParamDefault("page", "1"))
 	pageSize, _ := strconv.Atoi(ctx.URLParamDefault("page_size", "10"))
+	// var count int64
 	// fmt.Println("page:", page, "pageSize:", pageSize)
 	// 根据类型生成 slice
 	slice := reflect.MakeSlice(reflect.SliceOf(t), 0, 0)
@@ -190,5 +191,10 @@ func (v *ListAPIView) List(ctx iris.Context) response.IRFResult {
 		// err = rferrors.New(err.Error(), -1)
 		return response.ResponseResult(nil, 0, err)
 	}
+	// data := alias.Map{
+	// 	"count": count,
+	// 	"list":  smi,
+	// }
+	fmt.Println(smi)
 	return response.ResponseResult(smi, 0, err)
 }

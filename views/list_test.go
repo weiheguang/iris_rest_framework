@@ -6,6 +6,7 @@ import (
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/httptest"
+	"github.com/weiheguang/iris_rest_framework/alias"
 	"github.com/weiheguang/iris_rest_framework/database"
 	"github.com/weiheguang/iris_rest_framework/irisapp"
 	"github.com/weiheguang/iris_rest_framework/rftests"
@@ -36,7 +37,7 @@ import (
 
 		django rest framework 查询条件:
 			https://www.django-rest-framework.org/api-guide/filtering/#searchfilter
-			__exact 精确等于 like ‘aaa’
+			__exact 精确等于 = ‘aaa’
 			__iexact 精确等于 忽略大小写 ilike ‘aaa’
 			__contains 包含 like ‘%aaa%’
 			__icontains 包含 忽略大小写 ilike ‘%aaa%’，但是对于sqlite来说，contains的作用效果等同于icontains。
@@ -119,16 +120,16 @@ func TestListView(t *testing.T) {
 
 	query_param := "page=2&page_size=2&age__gt=18"
 	fmt.Println("----- 测试: querey_param: ", query_param)
-	ok_result := map[string]interface{}{
+	ok_result := alias.Map{
 		"code": 0,
 		// "message": "",
 		"data": []interface{}{
-			map[string]interface{}{
+			alias.Map{
 				"id":   3,
 				"name": "test3",
 				"age":  21,
 			},
-			map[string]interface{}{
+			alias.Map{
 				"id":   4,
 				"name": "test4",
 				"age":  22,
@@ -141,11 +142,11 @@ func TestListView(t *testing.T) {
 	// 测试 ?name__exact=xx 精确等于查询
 	query_param = "name__exact=test3"
 	fmt.Println("----- 测试: querey_param: ", query_param)
-	ok_exact_result := map[string]interface{}{
+	ok_exact_result := alias.Map{
 		"code": 0,
 		// "message": "",
 		"data": []interface{}{
-			map[string]interface{}{
+			alias.Map{
 				"id":   3,
 				"name": "test3",
 				"age":  21,
@@ -161,56 +162,56 @@ func TestListView(t *testing.T) {
 	// 测试 ?name__contains=xxx
 	query_param = "name__contains=test"
 	fmt.Println("----- 测试开始: querey_param: ", query_param)
-	ok_contains_result := map[string]interface{}{
+	ok_contains_result := alias.Map{
 		"code": 0,
 		// "message": "",
 		"data": []interface{}{
-			map[string]interface{}{
+			alias.Map{
 				"age":  19,
 				"id":   1,
 				"name": "test1",
 			},
-			map[string]interface{}{
+			alias.Map{
 				"age":  20,
 				"id":   2,
 				"name": "test2",
 			},
-			map[string]interface{}{
+			alias.Map{
 				"age":  21,
 				"id":   3,
 				"name": "test3",
 			},
-			map[string]interface{}{
+			alias.Map{
 				"age":  22,
 				"id":   4,
 				"name": "test4",
 			},
-			map[string]interface{}{
+			alias.Map{
 				"age":  23,
 				"id":   5,
 				"name": "test5",
 			},
-			map[string]interface{}{
+			alias.Map{
 				"age":  24,
 				"id":   6,
 				"name": "test6",
 			},
-			map[string]interface{}{
+			alias.Map{
 				"age":  25,
 				"id":   7,
 				"name": "test7",
 			},
-			map[string]interface{}{
+			alias.Map{
 				"age":  26,
 				"id":   8,
 				"name": "test8",
 			},
-			map[string]interface{}{
+			alias.Map{
 				"age":  27,
 				"id":   9,
 				"name": "test9",
 			},
-			map[string]interface{}{
+			alias.Map{
 				"age":  28,
 				"id":   10,
 				"name": "test10",
@@ -229,7 +230,7 @@ func TestListView(t *testing.T) {
 	// 测试 ?name__endswith=xxx
 	query_param = "name__endswith=test"
 	fmt.Println("----- 测试开始: querey_param: ", query_param)
-	ok_endswith_result := map[string]interface{}{
+	ok_endswith_result := alias.Map{
 		"code": 0,
 		// "message": "",
 		"data": []interface{}{}}
@@ -239,16 +240,16 @@ func TestListView(t *testing.T) {
 	// 测试 ?id__in=xxx,xxx
 	query_param = "id__in=3,4"
 	fmt.Println("----- 测试开始: querey_param: ", query_param)
-	ok_in_result := map[string]interface{}{
+	ok_in_result := alias.Map{
 		"code": 0,
 		// "message": "",
 		"data": []interface{}{
-			map[string]interface{}{
+			alias.Map{
 				"id":   3,
 				"name": "test3",
 				"age":  21,
 			},
-			map[string]interface{}{
+			alias.Map{
 				"id":   4,
 				"name": "test4",
 				"age":  22,
